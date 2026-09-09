@@ -1,5 +1,6 @@
 import discord
 
+from logic import gen_pass
 # ayricaliklar (intents) değişkeni botun ayrıcalıklarını depolayacak
 intents = discord.Intents.default()
 # Mesajları okuma ayrıcalığını etkinleştirelim
@@ -19,5 +20,11 @@ async def on_message(message):
         await message.channel.send("Selam!")
     elif message.content.startswith('$bye'):
         await message.channel.send("\U0001f642")
+    elif message.content.startswith('$password'):
+      # Şifre uzunluğunu belirleyelim
+        password = gen_pass(12)  # Şifre üretelim
+        await message.channel.send(f"İşte rastgele bir şifre: {password}")
     else:
         await message.channel.send(message.content)
+
+client.run("")
