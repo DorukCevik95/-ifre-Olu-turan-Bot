@@ -1,5 +1,8 @@
 import discord
 from discord.ext import commands
+import os
+import random
+import requests
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -18,26 +21,30 @@ async def hello(ctx):
 async def heh(ctx, count_heh = 5):
     await ctx.send("he" * count_heh)
 
-@bot.group()
-async def cool(ctx):
-    """Says if a user is cool.
-
-    In reality this just checks if a subcommand is being invoked.
-    """
-    if ctx.invoked_subcommand is None:
-        await ctx.send(f'No, {ctx.subcommand_passed} is not cool')
-
-
-@cool.command(name='bot')
-async def _bot(ctx):
-    """Is the bot cool?"""
-    await ctx.send('Yes, the bot is cool.')
-
-#-----------------------------------------
-
 @bot.command()
 async def joined(ctx, member: discord.Member):
     """Says when a member joined."""
     await ctx.send(f'{member.name} joined {discord.utils.format_dt(member.joined_at)}')
 
+@bot.command()
+async def mem(ctx):
+    files = os.listdir('images')
+    selected = random.choice(files)
+    with open(f'images/{selected}', 'rb') as f:
+        # Dönüştürülen Discord kütüphane dosyasını bu değişkende saklayalım!
+        picture = discord.File(f)
+   # Daha sonra bu dosyayı bir parametre olarak gönderebiliriz!
+    await ctx.send(file=picture)
+def get_dog_image_url():    
+    url = 'https://random.dog/woof.json'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
+
+
+@bot.command('dog')
+async def dog(ctx):
+    '''dog komutunu çağırdığımızda, program kopek_resmi_urlsi_al fonksiyonunu çağırır.'''
+    image_url = get_dog_image_url()
+    await ctx.send(image_url)
 bot.run("")
